@@ -22,13 +22,19 @@ module Yml2h
   end
 
   module Read
+    attr_writer :input_file
+    def read_from_yaml!(path = nil, permitted_classes: nil)
+      input = path || @input_file || "anonymous.yml"
+      read_from_yaml(input, permitted_classes: permitted_classes)
+    end
+
     module_function
 
     # @param path [String, Pathname] An absolute path to parseable YAML contents
     # @param permitted_classes [Array<Object>] Keyword arg; Additive list of classes to permit when loading a file
     def read_from_yaml(path, permitted_classes: nil)
       raw = ERB.new(Pathname.new(path).read).result(binding)
-      permitted_classes ||= [Symbol, Struct, OpenStruct]
+      permitted_classes ||= [Symbol, Struct, OpenStruct, Time, Date]
       YAML.safe_load(raw, permitted_classes: permitted_classes)
     rescue ArgumentError => e
       # TODO: Remove after ruby 2.5 support dropped (currently only here for AWS compat)
@@ -51,20 +57,29 @@ module Yml2h
     # @param options @see Read#read_from_yaml
     # @return [Array<Array<String, Object>>] Set of arrays where idx0 is the file name (extension optionally truncated), idx1 the attributes
     def compile_from_dir(dir, extension: false, **options)
-      Dir.glob("#{dir}/*.{yml,yaml}").map do |filename|
+      include_fixtures = singleton_class.included_modules.include?(Read)
+      file_extensions = %w[yml yaml]
+      file_extensions += %w[yml.erb yaml.erb] if include_fixtures
+
+      Dir.glob("#{dir}/*.{#{file_extensions.join(",")}}").map do |filename|
         definition = filename
 
         # Drop final "/" and extension unless specified
         unless extension
           # Drop extension
-          definition = definition.gsub(/\.(yml|yaml)\z/i, "")
+          definition = definition.gsub(/\.(yml|yaml)(\.erb)?\z/i, "")
           # Capture final "/" onwards
           definition = definition.match(/\/\w+\z/i).to_s
           # Drop "/"
           definition = definition.sub("/", "")
         end
 
-        as_object = Read.read_from_yaml(filename, **options)
+        # If we have access to Read#read_from_yaml!, use it here for injecting our current binding
+        as_object = if include_fixtures
+          read_from_yaml!(filename, **options)
+        else
+          Read.read_from_yaml(filename, **options)
+        end
 
         [definition, as_object]
       end

@@ -1,0 +1,29 @@
+# An example Team as an OpenStruct, with ERB tags (no variables)
+--- !ruby/object:OpenStruct
+table:
+  :name: "Foos"
+  :rank: 1
+  :users:
+    - :name: "Mario Lopez"
+      :email: "lil@mr.e"
+      :tos_acceptance: true
+      :address:
+        :street: "foosgonewild"
+      :profile:
+        :introduction: "foosgonewild.com/shop"
+        :hobbies:
+          - stuntin'
+      :meta:
+        :created_at: <%= DateTime.parse("2019-09-01") %>
+        :updated_at: <%= DateTime.parse("2019-09-01") %>
+        :uuid: "f0000000-f000-f000-f000-f00000000000"
+  :budget:
+    :amount: 1000000
+    :meta:
+      :created_at: <%= DateTime.parse("2019-09-01") %>
+      :updated_at: <%= DateTime.parse("2019-09-01") %>
+      :uuid: "f0000000-f000-f000-f000-f00000000000"
+  :meta:
+    :created_at: <%= DateTime.parse("2019-09-01") %>
+    :updated_at: <%= DateTime.parse("2019-09-01") %>
+    :uuid: "f0000000-f000-f000-f000-f00000000000"
