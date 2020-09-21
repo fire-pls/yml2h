@@ -1,0 +1,17 @@
+---
+:users: <% @users.each do |user| %>
+  - :name: <%= user[:name] %>
+    :email: <%= user[:email] %>
+    :tos_acceptance: <%= user[:tos_acceptance] %>
+    :address:
+      :street: <%= user[:address][:street] %>
+    :profile:
+      :introduction: <%= user[:profile][:introduction] %>
+      :hobbies: <% user[:profile][:hobbies].each do |hobby| %>
+        - <%= hobby %>
+      <% end %>
+    :meta:
+      :created_at: !ruby/object:DateTime <%= user[:meta][:created_at] %>
+      :updated_at: !ruby/object:DateTime <%= user[:meta][:updated_at] %>
+      :uuid: <%= user[:meta][:uuid] %>
+<% end %>

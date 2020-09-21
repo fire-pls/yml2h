@@ -24,14 +24,14 @@ RSpec.describe Yml2h::Read do
           expect(read).to be_an(OpenStruct)
         end
       end
+    end
 
-      context "for templated YAML files (erb)" do
-        let(:file) { get_file("fixture_team_hash.yml.erb") }
+    context "for templated YAML files (erb)" do
+      let(:file) { get_file("fixture_team_hash.yml.erb") }
 
-        it "fails" do
-          # TODO: Add lib-specific error class here
-          expect { read }.to raise_error(StandardError)
-        end
+      it "fails" do
+        # TODO: Add lib-specific error class here
+        expect { read }.to raise_error(StandardError)
       end
     end
   end
@@ -67,6 +67,39 @@ RSpec.describe Yml2h::Read do
             expect(read.public_send(key)).to eq(val)
           end
         end
+      end
+    end
+  end
+end
+
+RSpec.describe Yml2h::Compile do
+  describe "module function" do
+    let(:read) { described_class.compile_from_dir(dir) }
+
+    context "for normal YAML files" do
+      context "without class declarations" do
+        let(:dir) { get_file("compile_yml/") }
+
+        it "returns an array" do
+          expect(read).to be_an(Array)
+          expect(read.length).to eq(2)
+        end
+      end
+    end
+  end
+
+  describe "extended module" do
+    let(:read) { extended_klass.extend(Yml2h::Read).compile_from_dir!(dir) }
+
+    context "for templated YAML files (erb)" do
+      let(:dir) { get_file("compile_erb/") }
+      subject { stub_foo }
+
+      it "injects necessary template variables" do
+        hash = read.to_h
+
+        expect(hash.dig("meta", :meta)).to eq(FOO_TEAM[:meta])
+        expect(hash.dig("users", :users)).to eq(FOO_TEAM[:users])
       end
     end
   end
