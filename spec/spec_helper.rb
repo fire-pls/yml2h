@@ -1,4 +1,5 @@
 require "bundler/setup"
+require "tempfile"
 require "yml2h"
 
 # Test case constants
