@@ -81,8 +81,10 @@ RSpec.describe Yml2h::Compile do
         let(:dir) { get_file("compile_yml/") }
 
         it "returns an array" do
-          expect(read).to be_an(Array)
-          expect(read.length).to eq(2)
+          ary = read
+
+          expect(ary).to be_an(Array)
+          expect(ary.length).to eq(2)
         end
       end
     end
@@ -100,6 +102,54 @@ RSpec.describe Yml2h::Compile do
 
         expect(hash.dig("meta", :meta)).to eq(FOO_TEAM[:meta])
         expect(hash.dig("users", :users)).to eq(FOO_TEAM[:users])
+      end
+    end
+  end
+end
+
+RSpec.describe Yml2h::Write do
+  let(:file) { Tempfile.new(File.expand_path("../tmp", __dir__)) }
+  after(:each) do
+    file.close
+    file.unlink
+  end
+
+  describe "module function" do
+    let(:write) { described_class.write_to_yaml(input, file) }
+
+    context "for ruby hashes" do
+      let(:input) { {foo: "FOO", bar: 1, baz: Time.now} }
+
+      it "does not fail" do
+        expect { write }.to_not raise_error
+      end
+    end
+
+    context "for other ruby classes" do
+      let(:input) { OpenStruct.new({foo: "FOO", bar: 1, baz: Time.now}) }
+
+      it "does not fail" do
+        expect { write }.to_not raise_error
+      end
+    end
+  end
+
+  describe "extended module" do
+    let(:write) { extended_klass.write_to_yaml!(file) }
+
+    context "for ruby hashes" do
+      subject { {foo: "FOO", bar: 1, baz: Time.now} }
+
+      it "does not fail" do
+        expect { write }.to_not raise_error
+      end
+    end
+
+    context "for other ruby classes" do
+      subject { OpenStruct.new({foo: "FOO", bar: 1, baz: Time.now}) }
+
+      it "does not fail" do
+        expect { write }.to_not raise_error
       end
     end
   end
