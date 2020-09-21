@@ -1,6 +1,7 @@
 require_relative "yml2h/version"
 require "erb"
 require "fileutils"
+require "ostruct"
 require "yaml"
 
 module Yml2h
