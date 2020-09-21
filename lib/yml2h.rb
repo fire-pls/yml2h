@@ -35,7 +35,7 @@ module Yml2h
     # @param permitted_classes [Array<Object>] Keyword arg; Additive list of classes to permit when loading a file
     def read_from_yaml(path, permitted_classes: nil)
       raw = ERB.new(Pathname.new(path).read).result(binding)
-      permitted_classes ||= [Symbol, Struct, OpenStruct, Time, Date]
+      permitted_classes ||= [Symbol, Struct, OpenStruct, Time, Date, DateTime]
       YAML.safe_load(raw, permitted_classes: permitted_classes)
     rescue ArgumentError => e
       # TODO: Remove after ruby 2.5 support dropped (currently only here for AWS compat)

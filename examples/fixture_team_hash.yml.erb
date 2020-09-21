@@ -9,22 +9,22 @@
     :address:
       :street: <%= user[:address][:street] %>
     :profile:
-      :street: <%= user[:profile][:introduction] %>
+      :introduction: <%= user[:profile][:introduction] %>
       :hobbies: <% user[:profile][:hobbies].each do |hobby| %>
         - <%= hobby %>
       <% end %>
     :meta:
-      :created_at: <%= user[:meta][:created_at] %>
-      :updated_at: <%= user[:meta][:updated_at] %>
+      :created_at: !ruby/object:DateTime <%= user[:meta][:created_at] %>
+      :updated_at: !ruby/object:DateTime <%= user[:meta][:updated_at] %>
       :uuid: <%= user[:meta][:uuid] %>
 <% end %>
 :budget:
   :amount: <%= @budget[:amount] %>
   :meta:
-    :created_at: <%= @budget[:meta][:created_at] %>
-    :updated_at: <%= @budget[:meta][:updated_at] %>
+    :created_at: !ruby/object:DateTime <%= @budget[:meta][:created_at] %>
+    :updated_at: !ruby/object:DateTime <%= @budget[:meta][:updated_at] %>
     :uuid: <%= @budget[:meta][:uuid] %>
 :meta:
-  :created_at: <%= @meta[:created_at] %>
-  :updated_at: <%= @meta[:updated_at] %>
+  :created_at: !ruby/object:DateTime <%= @meta[:created_at] %>
+  :updated_at: !ruby/object:DateTime <%= @meta[:updated_at] %>
   :uuid: <%= @meta[:uuid] %>
